@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     // creando las variables que aran referencia a los widget (aspectos visuales de la aplicacion)
@@ -23,5 +25,16 @@ public class MainActivity extends AppCompatActivity {
         btnIniciar = findViewById(R.id.btnIniciar);
 
         //txtTitulo.setTextColor(Color.BLACK); //este metodo me permite cambiar el color de un texto
+    }
+
+    public void saludar(View view){
+
+        Toast.makeText(this, "Hiciste click", Toast.LENGTH_LONG).show();
+    }
+
+    public void despedir(View adios){
+
+        Toast.makeText(this, "adios", Toast.LENGTH_LONG).show();
+        txtTitulo.setTextColor(Color.GREEN);
     }
 }
