@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_light"
     tools:context=".SplashActivity">
 
     <ImageView
@@ -15,6 +16,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.256"
         app:srcCompat="@drawable/logo" />
 
     <TextView
@@ -24,8 +26,8 @@
         android:layout_marginTop="49dp"
         android:fontFamily="cursive"
         android:text="To-Do"
-        android:textColor="@android:color/background_light"
-        android:textSize="36sp"
+        android:textColor="@android:color/background_dark"
+        android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

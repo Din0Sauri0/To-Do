@@ -2,7 +2,9 @@ package com.ovalle.to_do;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -23,8 +25,16 @@ public class SplashActivity extends AppCompatActivity {
         TextView txtTodo = findViewById(R.id.txtTodo);
         ImageView imgToDo = findViewById(R.id.imgTodo);
 
-        imgToDo.setAnimation(desplazamiento_arriba);
-        txtTodo.setAnimation(desplazamiento_abajo);
+        imgToDo.setAnimation(animation1);
+        txtTodo.setAnimation(animation2);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        },2000);
     }
 }
