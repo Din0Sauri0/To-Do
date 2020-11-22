@@ -12,7 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity {
+    private FirebaseDatabase database;
+    private DatabaseReference reference;
+
 
     private Button btnRegistrer, btnlogin;
     private EditText txtEmail, txtPassword;
@@ -27,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
         txtForgetPassword = findViewById(R.id.txtForgetPassword);
-
+        //conexion a BD
+        conectarFirebase();
         //Escuchadores.
         txtForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intentRegister);
             }
         });
+    }
+
+
+    public void conectarFirebase(){
+        database = FirebaseDatabase.getInstance();
+        reference = database.getReference();
+        if(reference != null){
+            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        }
     }
 
 }
