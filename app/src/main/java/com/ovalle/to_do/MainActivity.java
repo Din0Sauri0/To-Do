@@ -1,5 +1,6 @@
 package com.ovalle.to_do;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,12 +13,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference reference;
+    private FirebaseAuth mAuth;
 
 
     private Button btnRegistrer, btnlogin;
@@ -47,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
         btnlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentTask = new Intent(MainActivity.this, task.class);
-                startActivity(intentTask);
+                String UserEmailLogin = txtEmail.getText().toString();
+                String userPasswordLogin = txtPassword.getText().toString();
+                loginUser(UserEmailLogin, userPasswordLogin);
             }
         });
 
@@ -61,13 +68,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     public void conectarFirebase(){
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
+        mAuth = FirebaseAuth.getInstance();
         if(reference != null){
             Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void loginUser(String userEmail, String userPassword){
+        mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    startActivity(new Intent(MainActivity.this, task.class));
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(), "No se ha podido iniciar sesion", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 }

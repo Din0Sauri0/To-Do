@@ -58,11 +58,9 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = txtEmail.getText().toString();
                 String password = txtPassword.getText().toString();
                 Usuario usuario = new Usuario(id,nombre,apellido,email,password);
-
                 crearUsuario(usuario);
             }
         });
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,9 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intentCancel);
             }
         });
-
-
-
     }
 
     public void conectarFirebase(){
