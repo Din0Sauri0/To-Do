@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,6 +28,8 @@ import java.util.UUID;
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference reference;
+    private FirebaseAuth mAuth;
+
 
     private EditText txtName, txtLastName, txtEmail, txtPassword, txtConfirmPassword;
     private Button btnRegister, btnCancel;
@@ -56,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                 crearUsuario(usuario);
             }
         });
-        //Escuchadores.
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,17 +78,33 @@ public class RegisterActivity extends AppCompatActivity {
     public void conectarFirebase(){
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
+        mAuth = FirebaseAuth.getInstance();
         if(reference != null){
             Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void crearUsuario(Usuario user){
-        reference.child("Usuarios").child(user.getId()).setValue(user, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                Toast.makeText(getApplicationContext(), "El usuario ha sido registrado", Toast.LENGTH_LONG).show();
-            }
-        });
+    public void crearUsuario(final Usuario userAuth){
+        if(userAuth != null){
+            String EmailAuth = userAuth.getEmail();
+            String passAuth = userAuth.getPassword();
+            mAuth.createUserWithEmailAndPassword(EmailAuth, passAuth).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        reference.child("Usuarios").child(userAuth.getId()).setValue(userAuth, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                Toast.makeText(getApplicationContext(),"El usuario ha sido creado exitosamente", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                    }else{
+                        Toast.makeText(getApplicationContext(),"No se ha podido registrar el usuario", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        }
+
     }
 }
