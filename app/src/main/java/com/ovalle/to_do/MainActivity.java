@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    startActivity(new Intent(MainActivity.this, task.class));
+                    startActivity(new Intent(MainActivity.this, Menu.class));
                     finish();
                 }else{
                     Toast.makeText(getApplicationContext(), "No se ha podido iniciar sesion", Toast.LENGTH_SHORT).show();
@@ -91,4 +91,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAuth.getCurrentUser() != null){
+            startActivity(new Intent(MainActivity.this, Menu.class));
+            finish();
+        }
+    }
 }
