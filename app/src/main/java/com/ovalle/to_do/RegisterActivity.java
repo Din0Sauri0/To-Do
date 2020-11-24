@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,14 +25,13 @@ import com.ovalle.to_do.entidades.Usuario;
 import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
+    //Firebase
     private FirebaseDatabase database;
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
-
-
+    //Widget
     private EditText txtName, txtLastName, txtEmail, txtPassword, txtConfirmPassword;
     private Button btnRegister, btnCancel;
-    //firebase bd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,19 +44,14 @@ public class RegisterActivity extends AppCompatActivity {
         txtConfirmPassword = findViewById(R.id.txtConfirmPassword);
         btnRegister = findViewById(R.id.btnRegister);
         btnCancel = findViewById(R.id.btnCancel);
-        //bd.conectarFirebase();
         conectarFirebase();
-
+        //Escuchadores
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String id = UUID.randomUUID().toString();
-                String nombre = txtName.getText().toString();
-                String apellido = txtLastName.getText().toString();
-                String email = txtEmail.getText().toString();
-                String password = txtPassword.getText().toString();
-                Usuario usuario = new Usuario(id,nombre,apellido,email,password);
-                crearUsuario(usuario);
+                String emailLogin = txtEmail.getText().toString();
+                String passwordLogin = txtPassword.getText().toString();
+                crearUsuario(emailLogin, passwordLogin);
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    //Metodos
     public void conectarFirebase(){
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
@@ -76,27 +73,31 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    public void crearUsuario(final Usuario userAuth){
-        if(userAuth != null){
-            String EmailAuth = userAuth.getEmail();
-            String passAuth = userAuth.getPassword();
-            mAuth.createUserWithEmailAndPassword(EmailAuth, passAuth).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()){
-                        reference.child("Usuarios").child(userAuth.getId()).setValue(userAuth, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                Toast.makeText(getApplicationContext(),"El usuario ha sido creado exitosamente", Toast.LENGTH_LONG).show();
-                            }
-                        });
+    public void crearUsuario(String emailAuth, String passAuth){
+        mAuth.createUserWithEmailAndPassword(emailAuth, passAuth).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    String id = mAuth.getCurrentUser().getUid();
+                    String nombre = txtName.getText().toString();
+                    String apellido = txtLastName.getText().toString();
+                    String email = txtEmail.getText().toString();
+                    String password = txtPassword.getText().toString();
+                    Usuario usuario = new Usuario(id,nombre,apellido,email,password);
+                    reference.child("Usuarios").child(id).setValue(usuario, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                            Toast.makeText(getApplicationContext(),"El usuario ha sido creado exitosamente", Toast.LENGTH_LONG).show();
+                            mAuth.signOut();
+                            startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        }
+                    });
 
-                    }else{
-                        Toast.makeText(getApplicationContext(),"No se ha podido registrar el usuario", Toast.LENGTH_LONG).show();
-                    }
+                }else{
+                    Toast.makeText(getApplicationContext(),"No se ha podido registrar el usuario", Toast.LENGTH_LONG).show();
                 }
-            });
-        }
-
+            }
+        });
     }
+
 }

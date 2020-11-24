@@ -57,7 +57,7 @@ public class Menu extends AppCompatActivity {
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
         if(reference != null){
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -72,10 +72,10 @@ public class Menu extends AppCompatActivity {
         reference.child("Usuarios").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                if(snapshot != null){
                     String nombreBienvenida = snapshot.child("nombre").getValue().toString();
                     String apellidoBienvenida = snapshot.child("apellido").getValue().toString();
-                    txtNombreBienvenida.setText(nombreBienvenida);
+                    txtNombreBienvenida.setText(nombreBienvenida+" "+apellidoBienvenida);
                 }
             }
 
