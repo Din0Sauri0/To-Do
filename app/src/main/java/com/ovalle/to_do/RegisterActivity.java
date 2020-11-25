@@ -20,9 +20,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Usuario;
 
 import java.util.UUID;
+
+import es.dmoral.toasty.Toasty;
 
 public class RegisterActivity extends AppCompatActivity {
     //Firebase
@@ -87,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                     reference.child("Usuarios").child(id).setValue(usuario, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                            Toast.makeText(getApplicationContext(),"El usuario ha sido creado exitosamente", Toast.LENGTH_LONG).show();
+                            Mensaje.mensaje(getApplicationContext(), "El usuario ha sido registrado");
                             mAuth.signOut();
                             startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                         }

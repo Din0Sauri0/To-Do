@@ -6,8 +6,7 @@ public class Tarea {
     private String descripcion;
     private String tarea;
 
-    public Tarea(String id) {
-        this.id = id;
+    public Tarea() {
     }
 
     public Tarea(String id, String nombre, String descripcion, String tarea) {

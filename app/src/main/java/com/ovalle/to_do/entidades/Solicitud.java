@@ -1,29 +1,37 @@
 package com.ovalle.to_do.entidades;
 
-public class Usuario {
-    private String id;
+public class Solicitud {
+    private String idSolicitud;
+    private String idUsuario;
     private String nombre;
     private String apellido;
     private String email;
-    private String password;
 
-    public Usuario() {
+    public Solicitud() {
     }
 
-    public Usuario(String id, String nombre, String apellido, String email, String password) {
-        this.id = id;
+    public Solicitud(String idSolicitud, String idUsuario, String nombre, String apellido, String email) {
+        this.idSolicitud = idSolicitud;
+        this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
-        this.password = password;
     }
 
-    public String getId() {
-        return id;
+    public String getIdSolicitud() {
+        return idSolicitud;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdSolicitud(String idSolicitud) {
+        this.idSolicitud = idSolicitud;
+    }
+
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNombre() {
@@ -48,13 +56,5 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

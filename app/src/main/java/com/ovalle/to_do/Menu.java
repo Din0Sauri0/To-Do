@@ -23,7 +23,7 @@ public class Menu extends AppCompatActivity {
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
     //Widget
-    private Button btnCerrarSesion, btnAgregarTarea;
+    private Button btnCerrarSesion, btnAgregarTarea, btnVerTarea, btnAgregarAmigos;
     private TextView txtNombreBienvenida;
 
     @Override
@@ -36,6 +36,8 @@ public class Menu extends AppCompatActivity {
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnAgregarTarea = findViewById(R.id.btnAgregarTarea);
         txtNombreBienvenida = findViewById(R.id.txtNombreBienvenida);
+        btnVerTarea = findViewById(R.id.btnVerTarea);
+        btnAgregarAmigos = findViewById(R.id.btnAgregarAmigos);
         //Escuchadores
         btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +49,18 @@ public class Menu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Menu.this, registerTask.class));
+            }
+        });
+        btnVerTarea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Menu.this, VerTareas.class));
+            }
+        });
+        btnAgregarAmigos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), SolicitudesAmistad.class));
             }
         });
 
