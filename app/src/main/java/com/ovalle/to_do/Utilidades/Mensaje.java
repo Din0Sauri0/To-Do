@@ -14,5 +14,8 @@ public class Mensaje {
     public static  void errorMensaje(Context context, String mensaje){
         Toasty.error(context, mensaje, Toast.LENGTH_LONG,true).show();
     }
+    public static void warningMensaje(Context context, String mensaje){
+        Toasty.warning(context, mensaje, Toast.LENGTH_LONG,true).show();
+    }
 }
 

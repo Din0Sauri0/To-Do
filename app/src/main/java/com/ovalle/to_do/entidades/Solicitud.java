@@ -1,7 +1,6 @@
 package com.ovalle.to_do.entidades;
 
 public class Solicitud {
-    private String idSolicitud;
     private String idUsuario;
     private String nombre;
     private String apellido;
@@ -10,20 +9,11 @@ public class Solicitud {
     public Solicitud() {
     }
 
-    public Solicitud(String idSolicitud, String idUsuario, String nombre, String apellido, String email) {
-        this.idSolicitud = idSolicitud;
+    public Solicitud(String idUsuario, String nombre, String apellido, String email) {
         this.idUsuario = idUsuario;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
-    }
-
-    public String getIdSolicitud() {
-        return idSolicitud;
-    }
-
-    public void setIdSolicitud(String idSolicitud) {
-        this.idSolicitud = idSolicitud;
     }
 
     public String getIdUsuario() {
