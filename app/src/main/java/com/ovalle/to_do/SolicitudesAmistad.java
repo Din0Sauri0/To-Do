@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ovalle.to_do.Adapters.solicitudesAdapter;
 import com.ovalle.to_do.Adapters.tareasAdapter;
 import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Solicitud;
@@ -36,9 +39,12 @@ public class SolicitudesAmistad extends AppCompatActivity {
     private TextView txtCodigo;
     private Button btnEnviarSolicitud;
     private EditText txtCodigoAmigo;
+    private RecyclerView recyclerSolicitudes;
     //Ayuda solicitud
-    ArrayList<Usuario> arrayListUsuario;
     Usuario user;
+    //ayuda Recycler
+    ArrayList<Solicitud> arrayListSolicitudes;
+    Solicitud solicitud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +52,15 @@ public class SolicitudesAmistad extends AppCompatActivity {
         setContentView(R.layout.activity_solicitudes_amistad);
         conectarFirebase();
         obtenerUsuarioActual(mAuth.getCurrentUser().getUid());
-        arrayListUsuario = new ArrayList<>();
         //Referencias
         txtCodigo = findViewById(R.id.txtCodigo);
         btnEnviarSolicitud = findViewById(R.id.btnEnviarSolicitud);
         txtCodigoAmigo = findViewById(R.id.txtCodigoAmigo);
+        recyclerSolicitudes = findViewById(R.id.recyclerSolicitudes);
+        recyclerSolicitudes.setLayoutManager(new LinearLayoutManager(this));
+        arrayListSolicitudes = new ArrayList<>();
         cargarCodigo();
+        cargarSolicitudes();
         //Escuchadores
         btnEnviarSolicitud.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +128,26 @@ public class SolicitudesAmistad extends AppCompatActivity {
                 String email = snapshot.child("email").getValue().toString();
                 String password = snapshot.child("password").getValue().toString();
                 user = new Usuario(id, nombre, apellido, email, password);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void cargarSolicitudes(){
+        reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Solicitudes").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                arrayListSolicitudes.clear();
+                for (DataSnapshot dato: snapshot.getChildren()) {
+                    solicitud = dato.getValue(Solicitud.class);
+                    arrayListSolicitudes.add(solicitud);
+                }
+                solicitudesAdapter adapter = new solicitudesAdapter(arrayListSolicitudes);
+                recyclerSolicitudes.setAdapter(adapter);
             }
 
             @Override
