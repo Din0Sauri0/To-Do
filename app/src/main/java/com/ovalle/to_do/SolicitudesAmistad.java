@@ -15,6 +15,7 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +43,7 @@ public class SolicitudesAmistad extends AppCompatActivity {
     private RecyclerView recyclerSolicitudes;
     //Ayuda solicitud
     Usuario user;
+    Solicitud solicitudes;
     //ayuda Recycler
     ArrayList<Solicitud> arrayListSolicitudes;
     Solicitud solicitud;
@@ -65,8 +67,8 @@ public class SolicitudesAmistad extends AppCompatActivity {
         btnEnviarSolicitud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String idSolicitud = txtCodigoAmigo.getText().toString();
-                solicitudAmistad(idSolicitud);
+                String Email = txtCodigoAmigo.getText().toString();
+                solicitudAmistad(Email);
             }
         });
 
@@ -87,26 +89,33 @@ public class SolicitudesAmistad extends AppCompatActivity {
         txtCodigo.setText(idUsuario);
     }
 
-    public void solicitudAmistad(final String idAmigo){
-        reference.child("Usuarios").child(idAmigo).addValueEventListener(new ValueEventListener() {
+    public void solicitudAmistad(final String email){
+        reference.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
+            boolean noexist = false;
+            Usuario usuarioObtenido;
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()){
-                    Mensaje.errorMensaje(getApplicationContext(), "El usuario no se ha encontrado");
-                }else if(user!=null){
-                    String idUsuario = user.getId();
-                    String nombreUsuario = user.getNombre();
-                    String apellidoUsuario = user.getApellido();
-                    String emailUsuario = user.getEmail();
-                    Solicitud solicitud = new Solicitud(idUsuario,nombreUsuario, apellidoUsuario, emailUsuario);
-                    reference.child("Usuarios").child(idAmigo).child("Solicitudes").child(idUsuario).setValue(solicitud, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                            Mensaje.mensaje(getApplicationContext(), "Solicitud enviada");
-                        }
-                    });
-                }else{
-                    Mensaje.warningMensaje(getApplicationContext(), "Se ha producido un error");
+
+                for (DataSnapshot dato:snapshot.getChildren()) {
+                    usuarioObtenido = dato.getValue(Usuario.class);
+                    if(usuarioObtenido.getEmail().equals(email)){
+                        noexist = true;
+                        String idUsuario = usuarioObtenido.getId();
+                        String miIdUsuario = user.getId();
+                        final String nombreUsuario = user.getNombre();
+                        final String apellidoUsuario = user.getApellido();
+                        String emailUsuario = user.getEmail();
+                        Solicitud solicitudAmistad = new Solicitud(miIdUsuario,nombreUsuario,apellidoUsuario,emailUsuario);
+                        reference.child("Usuarios").child(idUsuario).child("Solicitudes").child(miIdUsuario).setValue(solicitudAmistad, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                Mensaje.mensaje(getApplicationContext(), "Se ha enviado una solicitud de amnista ha: "+email);
+                            }
+                        });
+                    }
+                }
+                if(noexist != true){
+                    Mensaje.errorMensaje(getApplicationContext(), "No se ha encontrado usuario con ese correo");
                 }
             }
 
@@ -119,7 +128,7 @@ public class SolicitudesAmistad extends AppCompatActivity {
     }
 
     public void obtenerUsuarioActual(String idUsuario){
-        reference.child("Usuarios").child(idUsuario).addValueEventListener(new ValueEventListener() {
+        reference.child("Usuarios").child(idUsuario).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String id = snapshot.child("id").getValue().toString();
