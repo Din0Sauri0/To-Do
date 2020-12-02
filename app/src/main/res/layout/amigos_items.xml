@@ -4,12 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:layout_margin="@dimen/nav_header_vertical_spacing"
-    android:background="@drawable/round_layout_border">
+    android:background="@drawable/button_rounded">
 
     <TextView
-        android:id="@+id/txtTituloTarea"
+        android:id="@+id/txtNombreAmigo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -21,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtDescripcionTareaRecycler"
+        android:id="@+id/txtEmailAmigo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -32,16 +31,5 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTituloTarea" />
-
-    <ImageButton
-        android:id="@+id/btnVerNota"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_chevron_right_24" />
+        app:layout_constraintTop_toBottomOf="@+id/txtNombreAmigo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

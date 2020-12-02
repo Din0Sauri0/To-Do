@@ -48,7 +48,7 @@ public class VerTareas extends AppCompatActivity {
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
         if(reference != null){
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
         }
     }
 

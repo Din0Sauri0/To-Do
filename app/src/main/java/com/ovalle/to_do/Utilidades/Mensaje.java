@@ -11,6 +11,9 @@ public class Mensaje {
     public static void mensaje(Context context, String mensaje){
         Toasty.success(context, mensaje, Toast.LENGTH_LONG,true).show();
     }
+    public static void mensajeShort(Context context, String mensaje){
+        Toasty.success(context, mensaje, Toast.LENGTH_SHORT,true).show();
+    }
     public static  void errorMensaje(Context context, String mensaje){
         Toasty.error(context, mensaje, Toast.LENGTH_LONG,true).show();
     }

@@ -76,8 +76,8 @@ public class solicitudesAdapter extends RecyclerView.Adapter<solicitudesAdapter.
             btnAceptar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String email = txtEmailSolicitante.getText().toString();
-                    aceptarSolicitud(email);
+                    String Email = txtEmailSolicitante.getText().toString();
+                    aceptarSolicitud(Email);
                 }
             });
             btnRechazar.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +123,51 @@ public class solicitudesAdapter extends RecyclerView.Adapter<solicitudesAdapter.
                 Solicitud solicitudResivida;
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        solicitudResivida = data.getValue(Solicitud.class);
+                        if(solicitudResivida.getEmail().equals(email)){
+                            String idAmigo = solicitudResivida.getIdUsuario();
+                            String nombreAmigo = solicitudResivida.getNombre();
+                            String apellidoAmigo = solicitudResivida.getApellido();
+                            final String emailAmigo = solicitudResivida.getEmail();
+                            Amigo miAmigo = new Amigo(idAmigo,nombreAmigo,apellidoAmigo,emailAmigo);
+                            String miId = user.getId();
+                            String miNombre = user.getNombre();
+                            String miApellido = user.getApellido();
+                            String miEmail = user.getEmail();
+                            Amigo yoAmigo = new Amigo(miId,miNombre,miApellido,miEmail);
+                            reference.child("Usuarios").child(miId).child("Amigos").child(idAmigo).setValue(miAmigo, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+
+                                }
+                            });
+                            reference.child("Usuarios").child(idAmigo).child("Amigos").child(miId).setValue(yoAmigo, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+
+                                }
+                            });
+                            reference.child("Usuarios").child(miId).child("Solicitudes").child(solicitudResivida.getIdUsuario()).removeValue(new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                    Mensaje.mensaje(itemView.getContext(), "Se ha aceptado la solicitud de: "+emailAmigo);
+                                }
+                            });
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            /*
+            reference.child("Usuarios").child(user.getId()).child("Solicitudes").addListenerForSingleValueEvent(new ValueEventListener() {
+                Solicitud solicitudResivida;
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
                     for (DataSnapshot data:snapshot.getChildren()) {
                         solicitudResivida = data.getValue(Solicitud.class);
 
@@ -154,6 +199,10 @@ public class solicitudesAdapter extends RecyclerView.Adapter<solicitudesAdapter.
 
                 }
             });
+
+             */
+
+
         }
         public void conectarFirebase(){
             database = FirebaseDatabase.getInstance();
