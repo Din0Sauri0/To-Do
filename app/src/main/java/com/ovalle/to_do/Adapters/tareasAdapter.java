@@ -16,6 +16,7 @@ import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.VerTareas;
 import com.ovalle.to_do.entidades.Tarea;
 import com.ovalle.to_do.registerTask;
+import com.ovalle.to_do.verNotas;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class tareasAdapter extends RecyclerView.Adapter<tareasAdapter.viewHolder
                 @Override
                 public void onClick(View v) {
                     //Mensaje.mensajeShort(itemView.getContext(), tarea.getNombre());
-                    Intent intent = new Intent(itemView.getContext(), registerTask.class);
+                    Intent intent = new Intent(itemView.getContext(), verNotas.class);
                     intent.putExtra("Nombre nota", tarea.getNombre());
                     intent.putExtra("Descripcion nota", tarea.getDescripcion());
                     intent.putExtra("Cuerpo nota", tarea.getTarea());
