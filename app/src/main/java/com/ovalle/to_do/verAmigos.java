@@ -2,6 +2,7 @@ package com.ovalle.to_do;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,9 +52,11 @@ public class verAmigos extends AppCompatActivity {
         miId = mAuth.getCurrentUser().getUid();
         obtenerUsuarioActual(miId);
         cargarRecycler();
+
+
         //prueba recycler
 
-        recyclerAmigos.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+        /*recyclerAmigos.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 View view = rv.findChildViewUnder(e.getX(), e.getY());
@@ -73,7 +77,7 @@ public class verAmigos extends AppCompatActivity {
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
             }
-        });
+        });*/
 
     }
     //Metodos

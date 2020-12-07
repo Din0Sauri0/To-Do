@@ -1,5 +1,6 @@
 package com.ovalle.to_do.Adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ovalle.to_do.R;
+import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Amigo;
 
 import java.util.ArrayList;
@@ -30,7 +32,15 @@ public class amigosAdapter extends RecyclerView.Adapter<amigosAdapter.viewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull amigosAdapter.viewHolderDatos holder, int position) {
+    public void onBindViewHolder(@NonNull final amigosAdapter.viewHolderDatos holder, final int position) {
+        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                amigo = amigos.get(position);
+                Mensaje.mensajeShort(holder.itemView.getContext(), amigo.getNombre());
+
+            }
+        });*/
         holder.cargarAmigo(amigos.get(position));
     }
 
@@ -46,6 +56,7 @@ public class amigosAdapter extends RecyclerView.Adapter<amigosAdapter.viewHolder
             //Referencias
             txtNombreAmigo = itemView.findViewById(R.id.txtNombreAmigo);
             txtEmailAmigo = itemView.findViewById(R.id.txtEmailAmigo);
+
         }
         public void cargarAmigo(Amigo amigo){
             txtNombreAmigo.setText(amigo.getNombre()+" "+amigo.getApellido());

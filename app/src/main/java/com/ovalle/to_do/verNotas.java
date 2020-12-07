@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ovalle.to_do.Adapters.tareasAdapter;
 import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Tarea;
 
@@ -31,6 +32,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     private TextView txtTituloNota, txtDescripNota, txtCurpoNota;
     private ImageButton btnCompartir, btnModificar, btnEliminar, btnGuardarModificaion;
     //Variables
+    boolean estado;
     String idUsuario;
     String nombreNota;
     String descripcionNota;
@@ -56,8 +58,8 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         btnModificar = findViewById(R.id.btnModificar);
         btnEliminar = findViewById(R.id.btnEliminar);
         btnGuardarModificaion = findViewById(R.id.btnGuardarModificaion);
-
-        desabilitarTxt();
+        estado = false;
+        desabilitarTxt(estado);
 
         btnModificar.setOnClickListener(this);
         btnCompartir.setOnClickListener(this);
@@ -65,10 +67,11 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    private void desabilitarTxt() {
-        txtCurpoNota.setEnabled(false);
-        txtTituloNota.setEnabled(false);
-        txtDescripNota.setEnabled(false);
+    private void desabilitarTxt(boolean estado) {
+        txtCurpoNota.setEnabled(estado);
+        txtTituloNota.setEnabled(estado);
+        txtDescripNota.setEnabled(estado);
+;
     }
 
 
@@ -87,6 +90,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         switch (view.getId()){
             case R.id.btnCompartir:
                 Mensaje.mensajeShort(getApplicationContext(), "Compartir");
+                compartirNota(idNota);
                 break;
             case R.id.btnEliminar:
                 //Mensaje.errorMensaje(getApplicationContext(), "Eliminar");
@@ -100,7 +104,9 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
             case R.id.btnGuardarModificaion:
                 //Mensaje.mensajeShort(getApplicationContext(),"Guardar");
                 guardarModificacion(idNota);
-                desabilitarTxt();
+                estado = false;
+                desabilitarTxt(estado);
+                btnGuardarModificaion.setVisibility(View.INVISIBLE);
                 break;
         }
     }
@@ -133,9 +139,8 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void modificar(){
-        txtTituloNota.setEnabled(true);
-        txtDescripNota.setEnabled(true);
-        txtCurpoNota.setEnabled(true);
+        estado = true;
+        desabilitarTxt(estado);
         btnGuardarModificaion.setVisibility(View.VISIBLE);
         btnGuardarModificaion.setOnClickListener(this);
     }
@@ -151,6 +156,16 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
             }
         });
     }
+
+    public void compartirNota(String id){
+        Intent intent = new Intent(getApplicationContext(), tareasAdapter.class);
+        intent.putExtra("id", idNota);
+        intent.putExtra("nombre", nombreNota);
+        intent.putExtra("descripcion", descripcionNota);
+        intent.putExtra("cuerpo", cuerpoNota);
+        startActivity(intent);
+    }
+
 
 
 }
