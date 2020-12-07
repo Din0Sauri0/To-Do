@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ovalle.to_do.Utilidades.Mensaje;
+import com.ovalle.to_do.entidades.Tarea;
 
 public class verNotas extends AppCompatActivity implements View.OnClickListener {
     private FirebaseDatabase database;
@@ -26,7 +29,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     private FirebaseAuth mAuth;
     //Widget
     private TextView txtTituloNota, txtDescripNota, txtCurpoNota;
-    private ImageButton btnCompartir, btnModificar, btnEliminar;
+    private ImageButton btnCompartir, btnModificar, btnEliminar, btnGuardarModificaion;
     //Variables
     String idUsuario;
     String nombreNota;
@@ -52,15 +55,20 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         btnCompartir = findViewById(R.id.btnCompartir);
         btnModificar = findViewById(R.id.btnModificar);
         btnEliminar = findViewById(R.id.btnEliminar);
+        btnGuardarModificaion = findViewById(R.id.btnGuardarModificaion);
 
-        txtCurpoNota.setFocusable(false);
-        txtCurpoNota.setCursorVisible(false);
-        txtCurpoNota.setKeyListener(null);
+        desabilitarTxt();
 
         btnModificar.setOnClickListener(this);
         btnCompartir.setOnClickListener(this);
         btnEliminar.setOnClickListener(this);
 
+    }
+
+    private void desabilitarTxt() {
+        txtCurpoNota.setEnabled(false);
+        txtTituloNota.setEnabled(false);
+        txtDescripNota.setEnabled(false);
     }
 
 
@@ -87,6 +95,12 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.btnModificar:
                 Mensaje.warningMensaje(getApplicationContext(),"Modificar");
+                modificar();
+                break;
+            case R.id.btnGuardarModificaion:
+                //Mensaje.mensajeShort(getApplicationContext(),"Guardar");
+                guardarModificacion(idNota);
+                desabilitarTxt();
                 break;
         }
     }
@@ -102,9 +116,8 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
                 reference.child("Usuarios").child(idUsuario).child("Tareas").child(id).removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                        Mensaje.warningMensaje(getApplicationContext(), "Se ha eliminado la nota");
                         startActivity(new Intent(verNotas.this, VerTareas.class));
-                        VerTareas ver = new VerTareas();
-                        //Mensaje.warningMensaje(ver.getApplicationContext(), "Se ha eliminado la nota");
                         finish();
                     }
                 });
@@ -117,6 +130,26 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
             }
         });
         dialog.show();
+    }
+
+    public void modificar(){
+        txtTituloNota.setEnabled(true);
+        txtDescripNota.setEnabled(true);
+        txtCurpoNota.setEnabled(true);
+        btnGuardarModificaion.setVisibility(View.VISIBLE);
+        btnGuardarModificaion.setOnClickListener(this);
+    }
+    public void guardarModificacion(String id){
+        String newTitulo = txtTituloNota.getText().toString().trim();
+        String newDescripcion = txtDescripNota.getText().toString().trim();
+        String newCuerpo = txtCurpoNota.getText().toString().trim();
+        Tarea newTarea = new Tarea(id,newTitulo,newDescripcion,newCuerpo);
+        reference.child("Usuarios").child(idUsuario).child("Tareas").child(id).setValue(newTarea, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                Mensaje.mensajeShort(getApplicationContext(), "La nota ha sido actualizada");
+            }
+        });
     }
 
 
