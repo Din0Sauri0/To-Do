@@ -17,9 +17,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Usuario;
 
@@ -35,6 +37,9 @@ public class RegisterActivity extends AppCompatActivity {
     //Widget
     private EditText txtName, txtLastName, txtEmail, txtPassword, txtConfirmPassword;
     private Button btnRegister, btnCancel;
+    //Variables
+    Usuario usuario;
+    boolean exist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String emailLogin = txtEmail.getText().toString();
-                String passwordLogin = txtPassword.getText().toString();
-                crearUsuario(emailLogin, passwordLogin);
+                validarNewUser(emailLogin);
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +105,52 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void validarNewUser(final String email){
+        exist = false;
+        if(txtName.getText().toString().equals("")){
+            txtName.setError("Complete el campo");
+        }else if (txtName.getText().toString().length() <= 2){
+            txtName.setError("Ingrese un nombre valido");
+        }else if(txtLastName.getText().toString().equals("")){
+            txtLastName.setError("Complete el campo");
+        }else if(txtLastName.getText().toString().length() <= 2){
+            txtLastName.setError("Ingrese un apellido valido");
+        }else if(txtEmail.getText().toString().equals("")){
+            txtEmail.setError("Complete el campo");
+        }else if(txtEmail.getText().toString().length() <=10){
+            txtEmail.setError("Ingrese un correo valido");
+        }else if(txtPassword.getText().toString().equals("")){
+            txtPassword.setError("Complete el campo");
+        }else if(txtPassword.getText().toString().length() <= 7){
+            txtPassword.setError("minimo 8 caracteres");
+        }else if(!txtConfirmPassword.getText().toString().equals(txtPassword.getText().toString())){
+            txtConfirmPassword.setError("Las password no considen");
+        }else{
+            reference.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot data: snapshot.getChildren()) {
+                        usuario = data.getValue(Usuario.class);
+                        if(usuario.getEmail().equals(email)){
+                            exist = true;
+                            Mensaje.errorMensaje(getApplicationContext(), "El correo ya se encuentra registrado");
+                        }
+                    }
+                    if(exist == false){
+                        String emailLogin = txtEmail.getText().toString();
+                        String passwordLogin = txtPassword.getText().toString();
+                        crearUsuario(emailLogin, passwordLogin);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
     }
 
 }

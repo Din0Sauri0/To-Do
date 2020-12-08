@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Tarea;
 
 import java.util.UUID;
@@ -41,12 +42,8 @@ public class registerTask extends AppCompatActivity {
         btnRegistrarTarea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String idTarea = UUID.randomUUID().toString();
-                String nombreTarea = txtNombreTarea.getText().toString();
-                String descripcionTarea = txtDescripcionTarea.getText().toString();
-                String contenidoTarea = txtTarea.getText().toString();
-                Tarea tarea = new Tarea(idTarea,nombreTarea, descripcionTarea,contenidoTarea);
-                registrarTarea(tarea);
+                registrarTarea();
+
             }
         });
 
@@ -61,13 +58,32 @@ public class registerTask extends AppCompatActivity {
         }
     }
 
-    public void registrarTarea(Tarea tarea){
-        reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Tareas").child(tarea.getId()).setValue(tarea, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                Toast.makeText(getApplicationContext(), "Tarea registrada", Toast.LENGTH_LONG).show();
-            }
-        });
+    public void registrarTarea(){
+        if(txtNombreTarea.getText().toString().equals("")){
+            txtNombreTarea.setError("Ingrese un titulo");
+        }else if(txtDescripcionTarea.getText().toString().equals("")){
+            txtDescripcionTarea.setError("Ingrese una descripcion");
+        }else if(txtTarea.getText().toString().equals("")){
+            Mensaje.warningMensaje(getApplicationContext(), "Ingrese el contenido de la nota");
+        }else{
+            String idTarea = UUID.randomUUID().toString();
+            String nombreTarea = txtNombreTarea.getText().toString();
+            String descripcionTarea = txtDescripcionTarea.getText().toString();
+            String contenidoTarea = txtTarea.getText().toString();
+            Tarea tarea = new Tarea(idTarea,nombreTarea, descripcionTarea,contenidoTarea);
+            reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Tareas").child(tarea.getId()).setValue(tarea, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                    Mensaje.mensajeShort(getApplicationContext(), "La nota ha sido guardada");
+                    limpiarCajas();
+                }
+            });
+        }
+    }
 
+    public void limpiarCajas(){
+        txtNombreTarea.setText(null);
+        txtDescripcionTarea.setText(null);
+        txtTarea.setText(null);
     }
 }

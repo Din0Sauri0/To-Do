@@ -17,18 +17,26 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.ovalle.to_do.Utilidades.Mensaje;
+import com.ovalle.to_do.entidades.Usuario;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
-
-
+    //Widget
     private Button btnRegistrer, btnlogin;
     private EditText txtEmail, txtPassword;
     private TextView txtForgetPassword;
+    //Variables
+    Usuario usuaio;
+    boolean existEmail = false;
+    boolean existPass = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,23 +80,51 @@ public class MainActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if(reference != null){
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
     }
 
-    public void loginUser(String userEmail, String userPassword){
-        mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    startActivity(new Intent(MainActivity.this, Menu.class));
-                    finish();
-                }else{
-                    Toast.makeText(getApplicationContext(), "No se ha podido iniciar sesion", Toast.LENGTH_SHORT).show();
+    public void loginUser(final String userEmail, final String userPassword){
+        if(userEmail.equals("") || userPassword.equals("")){
+            Mensaje.warningMensaje(getApplicationContext(), "Ingrese todas las credenciales.");
+
+        }else{
+            mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        startActivity(new Intent(MainActivity.this, Menu.class));
+                        finish();
+                    }else{
+                        reference.child("Usuarios").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot data: snapshot.getChildren()) {
+                                    usuaio = data.getValue(Usuario.class);
+                                    if(usuaio.getEmail().equals(userEmail)){
+                                        existEmail = true;
+                                        if(!usuaio.getPassword().equals(userPassword)){
+                                            Mensaje.errorMensaje(getApplicationContext(), "La password no es correcta");
+                                        }
+                                    }
+                                }
+                                if(existEmail != true){
+                                    Mensaje.warningMensaje(getApplicationContext(), "El correo no existe");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     @Override
