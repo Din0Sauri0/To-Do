@@ -11,17 +11,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ovalle.to_do.Adapters.tareasAdapter;
 import com.ovalle.to_do.Utilidades.Mensaje;
+import com.ovalle.to_do.entidades.Amigo;
 import com.ovalle.to_do.entidades.Tarea;
 
 public class verNotas extends AppCompatActivity implements View.OnClickListener {
@@ -32,6 +38,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     private TextView txtTituloNota, txtDescripNota, txtCurpoNota;
     private ImageButton btnCompartir, btnModificar, btnEliminar, btnGuardarModificaion;
     //Variables
+    Amigo amigo;
     boolean estado;
     String idUsuario;
     String nombreNota;
@@ -89,7 +96,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnCompartir:
-                Mensaje.mensajeShort(getApplicationContext(), "Compartir");
+                //Mensaje.mensajeShort(getApplicationContext(), "Compartir");
                 compartirNota(idNota);
                 break;
             case R.id.btnEliminar:
@@ -157,13 +164,53 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
-    public void compartirNota(String id){
-        Intent intent = new Intent(getApplicationContext(), tareasAdapter.class);
-        intent.putExtra("id", idNota);
-        intent.putExtra("nombre", nombreNota);
-        intent.putExtra("descripcion", descripcionNota);
-        intent.putExtra("cuerpo", cuerpoNota);
-        startActivity(intent);
+    public void compartirNota(final String id){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("Ingrese el correo del usuario al desea compartir la nota");
+        dialog.setTitle("Compartir");
+        final EditText input = new EditText(this);
+        dialog.setView(input);
+
+        dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                //Mensaje.mensajeShort(getApplicationContext(), "Has presionado si");
+                final String correoShare = input.getText().toString();
+                reference.child("Usuarios").child(idUsuario).child("Amigos").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data: snapshot.getChildren()) {
+                            amigo = data.getValue(Amigo.class);
+                            if (amigo.getEmail().equals(correoShare)){
+                                String idAmigo = amigo.getId();
+                                Tarea tarea = new Tarea(idNota, nombreNota, descripcionNota,cuerpoNota);
+                                reference.child("Usuarios").child(idAmigo).child("Notas compartidas").setValue(tarea, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                        dialog.dismiss();
+                                        Mensaje.mensajeShort(getApplicationContext(), "Se ha compartido la nota con: "+correoShare);
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Mensaje.errorMensaje(getApplicationContext(), "Has presionado no");
+            }
+        });
+        dialog.show();
+
+
     }
 
 
