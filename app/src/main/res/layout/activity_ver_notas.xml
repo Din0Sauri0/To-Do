@@ -23,18 +23,18 @@
                 android:layout_height="720dp">
 
                 <ImageButton
-                    android:id="@+id/btnModificar"
+                    android:id="@+id/btnModificarNotaCompart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="44dp"
                     android:layout_marginEnd="12dp"
                     android:background="@color/cardview_shadow_end_color"
-                    app:layout_constraintEnd_toStartOf="@+id/btnCompartir"
+                    app:layout_constraintEnd_toStartOf="@+id/btnCompartirNota"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_edit_24" />
 
                 <ImageButton
-                    android:id="@+id/btnGuardarModificaion"
+                    android:id="@+id/btnGuardarModificaionCompart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
@@ -42,11 +42,11 @@
                     android:background="@color/cardview_shadow_end_color"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btnCompartir"
+                    app:layout_constraintTop_toBottomOf="@+id/btnCompartirNota"
                     app:srcCompat="@drawable/ic_baseline_save_24" />
 
                 <ImageButton
-                    android:id="@+id/btnCompartir"
+                    android:id="@+id/btnCompartirNota"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="44dp"
@@ -57,18 +57,18 @@
                     app:srcCompat="@drawable/ic_baseline_share_24" />
 
                 <ImageButton
-                    android:id="@+id/btnEliminar"
+                    android:id="@+id/btnEliminarCompart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="44dp"
                     android:layout_marginEnd="12dp"
                     android:background="@color/cardview_shadow_end_color"
-                    app:layout_constraintEnd_toStartOf="@+id/btnModificar"
+                    app:layout_constraintEnd_toStartOf="@+id/btnModificarNotaCompart"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_delete_24" />
 
                 <EditText
-                    android:id="@+id/txtCuerpoNota"
+                    android:id="@+id/txtCuerpoNotaCompart"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="30dp"
@@ -84,11 +84,11 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtDescripNota"
+                    app:layout_constraintTop_toBottomOf="@+id/txtDescripNotaCompart"
                     app:layout_constraintVertical_bias="1.0" />
 
                 <EditText
-                    android:id="@+id/txtTituloNota"
+                    android:id="@+id/txtTituloNotaCompart"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
@@ -99,12 +99,12 @@
                     android:inputType="textPersonName"
                     android:textColor="@color/cardview_light_background"
                     android:textSize="30sp"
-                    app:layout_constraintEnd_toStartOf="@+id/btnEliminar"
+                    app:layout_constraintEnd_toStartOf="@+id/btnEliminarCompart"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/txtDescripNota"
+                    android:id="@+id/txtDescripNotaCompart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
@@ -114,7 +114,7 @@
                     android:inputType="textPersonName"
                     android:textColor="@color/cardview_light_background"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtTituloNota" />
+                    app:layout_constraintTop_toBottomOf="@+id/txtTituloNotaCompart" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>

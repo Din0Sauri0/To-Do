@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ovalle.to_do.Utilidades.Mensaje;
 
 public class Menu extends AppCompatActivity {
     //Firebase
@@ -23,7 +24,7 @@ public class Menu extends AppCompatActivity {
     private DatabaseReference reference;
     private FirebaseAuth mAuth;
     //Widget
-    private Button btnCerrarSesion, btnAgregarTarea, btnVerTarea, btnAgregarAmigos, btnVerAmigo;
+    private Button btnCerrarSesion, btnAgregarTarea, btnVerTarea, btnAgregarAmigos, btnVerAmigo, btnNotasCompartidas;
     private TextView txtNombreBienvenida;
 
     @Override
@@ -39,6 +40,7 @@ public class Menu extends AppCompatActivity {
         btnVerTarea = findViewById(R.id.btnVerTarea);
         btnAgregarAmigos = findViewById(R.id.btnAgregarAmigos);
         btnVerAmigo = findViewById(R.id.btnVerAmigo);
+        btnNotasCompartidas = findViewById(R.id.btnNotasCompartidas);
         //Escuchadores
         btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +72,12 @@ public class Menu extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), verAmigos.class));
             }
         });
+        btnNotasCompartidas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), verNotasCompartidas.class));
+            }
+        });
 
 
     }
@@ -78,8 +86,9 @@ public class Menu extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if(reference != null){
-            //Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
     }
 

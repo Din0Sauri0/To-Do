@@ -1,5 +1,6 @@
 package com.ovalle.to_do;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,8 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if(reference != null){
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
     }
 

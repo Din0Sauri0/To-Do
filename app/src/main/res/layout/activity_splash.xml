@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:background="@android:color/background_light"
     tools:context=".SplashActivity">
 
@@ -16,20 +17,20 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.256"
-        app:srcCompat="@drawable/logo" />
+        app:layout_constraintVertical_bias="0.385"
+        app:srcCompat="@drawable/postit" />
 
     <TextView
-        android:id="@+id/txtTodo"
+        android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="49dp"
-        android:fontFamily="sans-serif"
+        android:layout_marginTop="1dp"
         android:text="To-Do"
-        android:textColor="@android:color/background_dark"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/background"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toStartOf="@+id/imgTodo"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imgTodo"
         app:layout_constraintTop_toBottomOf="@+id/imgTodo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

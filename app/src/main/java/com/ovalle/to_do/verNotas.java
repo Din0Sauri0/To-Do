@@ -4,16 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -25,7 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.ovalle.to_do.Adapters.tareasAdapter;
 import com.ovalle.to_do.Utilidades.Mensaje;
 import com.ovalle.to_do.entidades.Amigo;
 import com.ovalle.to_do.entidades.Tarea;
@@ -39,7 +33,9 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     private ImageButton btnCompartir, btnModificar, btnEliminar, btnGuardarModificaion;
     //Variables
     Amigo amigo;
+    Amigo amigoEncontrado;
     boolean estado;
+    boolean exist;
     String idUsuario;
     String nombreNota;
     String descripcionNota;
@@ -51,9 +47,9 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         setContentView(R.layout.activity_ver_notas);
         conectarFirebase();
         idUsuario = mAuth.getCurrentUser().getUid();
-        txtTituloNota = findViewById(R.id.txtTituloNota);
-        txtDescripNota = findViewById(R.id.txtDescripNota);
-        txtCurpoNota = findViewById(R.id.txtCuerpoNota);
+        txtTituloNota = findViewById(R.id.txtTituloNotaCompart);
+        txtDescripNota = findViewById(R.id.txtDescripNotaCompart);
+        txtCurpoNota = findViewById(R.id.txtCuerpoNotaCompart);
         nombreNota = getIntent().getStringExtra("Nombre nota");
         descripcionNota = getIntent().getStringExtra("Descripcion nota");
         cuerpoNota = getIntent().getStringExtra("Cuerpo nota");
@@ -61,10 +57,10 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         txtTituloNota.setText(nombreNota);
         txtDescripNota.setText(descripcionNota);
         txtCurpoNota.setText(cuerpoNota);
-        btnCompartir = findViewById(R.id.btnCompartir);
-        btnModificar = findViewById(R.id.btnModificar);
-        btnEliminar = findViewById(R.id.btnEliminar);
-        btnGuardarModificaion = findViewById(R.id.btnGuardarModificaion);
+        btnCompartir = findViewById(R.id.btnCompartirNota);
+        btnModificar = findViewById(R.id.btnModificarNotaCompart);
+        btnEliminar = findViewById(R.id.btnEliminarCompart);
+        btnGuardarModificaion = findViewById(R.id.btnGuardarModificaionCompart);
         estado = false;
         desabilitarTxt(estado);
 
@@ -74,41 +70,41 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
 
     }
 
+
     private void desabilitarTxt(boolean estado) {
         txtCurpoNota.setEnabled(estado);
         txtTituloNota.setEnabled(estado);
         txtDescripNota.setEnabled(estado);
-;
     }
 
 
-    public void conectarFirebase() {
+    public void conectarFirebase(){
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if (reference != null) {
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
-
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btnCompartir:
+            case R.id.btnCompartirNota:
                 //Mensaje.mensajeShort(getApplicationContext(), "Compartir");
                 compartirNota(idNota);
                 break;
-            case R.id.btnEliminar:
+            case R.id.btnEliminarCompart:
                 //Mensaje.errorMensaje(getApplicationContext(), "Eliminar");
                 eliminar(idNota);
 
                 break;
-            case R.id.btnModificar:
+            case R.id.btnModificarNotaCompart:
                 Mensaje.warningMensaje(getApplicationContext(),"Modificar");
                 modificar();
                 break;
-            case R.id.btnGuardarModificaion:
+            case R.id.btnGuardarModificaionCompart:
                 //Mensaje.mensajeShort(getApplicationContext(),"Guardar");
                 guardarModificacion(idNota);
                 estado = false;
@@ -165,6 +161,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     }
 
     public void compartirNota(final String id){
+        exist=false;
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("Ingrese el correo del usuario al desea compartir la nota");
         dialog.setTitle("Compartir");
@@ -176,22 +173,42 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
             public void onClick(final DialogInterface dialog, int which) {
                 //Mensaje.mensajeShort(getApplicationContext(), "Has presionado si");
                 final String correoShare = input.getText().toString();
-                reference.child("Usuarios").child(idUsuario).child("Amigos").addValueEventListener(new ValueEventListener() {
+                reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Amigos").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot data: snapshot.getChildren()) {
-                            amigo = data.getValue(Amigo.class);
-                            if (amigo.getEmail().equals(correoShare)){
-                                String idAmigo = amigo.getId();
-                                Tarea tarea = new Tarea(idNota, nombreNota, descripcionNota,cuerpoNota);
-                                reference.child("Usuarios").child(idAmigo).child("Notas compartidas").setValue(tarea, new DatabaseReference.CompletionListener() {
+                        for (DataSnapshot data:snapshot.getChildren()){
+                            amigoEncontrado = data.getValue(Amigo.class);
+                            if(amigoEncontrado.getEmail().equals(correoShare)){
+                                exist=true;
+                                reference.child("Usuarios").child(idUsuario).child("Amigos").addValueEventListener(new ValueEventListener() {
                                     @Override
-                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                        dialog.dismiss();
-                                        Mensaje.mensajeShort(getApplicationContext(), "Se ha compartido la nota con: "+correoShare);
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for (DataSnapshot data: snapshot.getChildren()) {
+                                            amigo = data.getValue(Amigo.class);
+                                            if (amigo.getEmail().equals(correoShare)){
+                                                String idAmigo = amigo.getId();
+                                                Tarea tarea = new Tarea(idNota, nombreNota, descripcionNota,cuerpoNota);
+                                                reference.child("Usuarios").child(idAmigo).child("NotasCompartidas").child(idNota).setValue(tarea, new DatabaseReference.CompletionListener() {
+                                                    @Override
+                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                        dialog.dismiss();
+                                                        Mensaje.mensajeShort(getApplicationContext(), "Se ha compartido la nota con: "+correoShare);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
                                     }
                                 });
                             }
+                        }
+                        if (exist==false || correoShare.equals("")){
+                            dialog.dismiss();
+                            Mensaje.errorMensaje(getApplicationContext(), "No se ha encontrado este usuario en sus amigos");
                         }
                     }
 
@@ -200,12 +217,14 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
 
                     }
                 });
+
+
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Mensaje.errorMensaje(getApplicationContext(), "Has presionado no");
+                dialog.dismiss();
             }
         });
         dialog.show();

@@ -12,21 +12,14 @@ import android.widget.TextView;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private ImageView imgTodo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         //animaciones
-
-        Animation animation1 = AnimationUtils.loadAnimation(this, R.anim.desplazamiento_arriba);
-        Animation animation2 = AnimationUtils.loadAnimation(this, R.anim.desplazamiento_abajo);
-
-        TextView txtTodo = findViewById(R.id.txtTodo);
-        ImageView imgToDo = findViewById(R.id.imgTodo);
-
-        imgToDo.setAnimation(animation1);
-        txtTodo.setAnimation(animation2);
+        imgTodo = findViewById(R.id.imgTodo);
 
         new Handler().postDelayed(new Runnable() {
             @Override

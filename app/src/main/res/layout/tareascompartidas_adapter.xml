@@ -5,32 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/nav_header_vertical_spacing"
-    android:background="@drawable/button_rounded">
+    android:background="@drawable/round_layout_border">
+
 
     <TextView
-        android:id="@+id/txtNombreAmigo"
+        android:id="@+id/txtTituloNotaCompartida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="15dp"
         android:text="TextView"
-        android:textColor="@color/cardview_light_background"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtEmailAmigo"
+        android:id="@+id/txtDescripNotaCompartida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="15dp"
         android:text="TextView"
-        android:textColor="@android:color/darker_gray"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNombreAmigo" />
+        app:layout_constraintTop_toBottomOf="@+id/txtTituloNotaCompartida" />
+
+    <ImageButton
+        android:id="@+id/btnVerNotaCompartida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="28dp"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_chevron_right_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

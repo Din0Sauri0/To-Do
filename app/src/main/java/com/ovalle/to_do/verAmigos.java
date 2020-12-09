@@ -52,41 +52,15 @@ public class verAmigos extends AppCompatActivity {
         miId = mAuth.getCurrentUser().getUid();
         obtenerUsuarioActual(miId);
         cargarRecycler();
-
-
-        //prueba recycler
-
-        /*recyclerAmigos.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                View view = rv.findChildViewUnder(e.getX(), e.getY());
-                if(view != null){
-                    int position = rv.getChildAdapterPosition(view);
-                    amigo = arrayListAmigo.get(position);
-                    Mensaje.mensajeShort(getApplicationContext(), amigo.getNombre());
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });*/
-
     }
     //Metodos
     public void conectarFirebase(){
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if(reference != null){
-            Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
     }
     public void cargarRecycler(){

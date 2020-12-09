@@ -49,6 +49,7 @@ public class SolicitudesAmistad extends AppCompatActivity {
     boolean exist;
     boolean soliExist;
     Solicitud solicitudes;
+    String idAmigo;
     //ayuda Recycler
     ArrayList<Solicitud> arrayListSolicitudes;
     Solicitud solicitud;
@@ -84,59 +85,85 @@ public class SolicitudesAmistad extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference();
         mAuth = FirebaseAuth.getInstance();
-        if(reference != null){
-            //Toast.makeText(getApplicationContext(), "Conectado", Toast.LENGTH_LONG).show();
+        if(reference == null){
+            //Dialog
+            Mensaje.errorMensaje(getApplicationContext(), "No se ha podido conectar con el servidor");
         }
     }
 
     public void solicitudAmistad(final String email){
-
-
-
-        if(soliExist == false){
-            if(email.equals(mAuth.getCurrentUser().getEmail())){
-                Mensaje.errorMensaje(getApplicationContext(), "Ha ocurrido un error");
-            }else{
-                reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Amigos").addListenerForSingleValueEvent(new ValueEventListener() {
+        soliExist = false;
+        reference.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data : snapshot.getChildren()){
+                    usuario = data.getValue(Usuario.class);
+                    if(usuario.getEmail().equals(email)){
+                        //soliExist=true;
+                        idAmigo = usuario.getId();
+                    }
+                }
+                reference.child("Usuarios").child(idAmigo).child("Solicitudes").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        exist = false;
                         for(DataSnapshot data : snapshot.getChildren()){
-                            amigo = data.getValue(Amigo.class);
-                            if(amigo.getEmail().equals(email)){
-                                exist = true;
-                                Mensaje.errorMensaje(getApplicationContext(), "Este usuario ya ha sido agregado a su lista de amigos");
+                            solicitudes = data.getValue(Solicitud.class);
+                            if(solicitudes.getEmail().equals(mAuth.getCurrentUser().getEmail())){
+                                soliExist = true;
+                                Mensaje.warningMensaje(getApplicationContext(), "Este usuario ya tiene solicitud de amistad suya");
                             }
                         }
-                        if(exist==false){
-                            if(txtCodigoAmigo.getText().toString().equals("")){
-                                txtCodigoAmigo.setError("Ingrese un correo");
+                        if(soliExist == false){
+                            if(email.equals(mAuth.getCurrentUser().getEmail())){
+                                Mensaje.errorMensaje(getApplicationContext(), "Ha ocurrido un error");
                             }else{
-                                reference.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    boolean noexist = false;
-                                    Usuario usuarioObtenido;
+                                reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Amigos").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for (DataSnapshot dato:snapshot.getChildren()) {
-                                            usuarioObtenido = dato.getValue(Usuario.class);
-                                            if(usuarioObtenido.getEmail().equals(email)){
-                                                noexist = true;
-                                                String idUsuario = usuarioObtenido.getId();
-                                                String miIdUsuario = user.getId();
-                                                final String nombreUsuario = user.getNombre();
-                                                final String apellidoUsuario = user.getApellido();
-                                                String emailUsuario = user.getEmail();
-                                                Solicitud solicitudAmistad = new Solicitud(miIdUsuario,nombreUsuario,apellidoUsuario,emailUsuario);
-                                                reference.child("Usuarios").child(idUsuario).child("Solicitudes").child(miIdUsuario).setValue(solicitudAmistad, new DatabaseReference.CompletionListener() {
+                                        exist = false;
+                                        for(DataSnapshot data : snapshot.getChildren()){
+                                            amigo = data.getValue(Amigo.class);
+                                            if(amigo.getEmail().equals(email)){
+                                                exist = true;
+                                                Mensaje.errorMensaje(getApplicationContext(), "Este usuario ya ha sido agregado a su lista de amigos");
+                                            }
+                                        }
+                                        if(exist==false){
+                                            if(txtCodigoAmigo.getText().toString().equals("")){
+                                                txtCodigoAmigo.setError("Ingrese un correo");
+                                            }else{
+                                                reference.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    boolean noexist = false;
+                                                    Usuario usuarioObtenido;
                                                     @Override
-                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                        Mensaje.mensaje(getApplicationContext(), "Se ha enviado una solicitud de amnista ha: "+email);
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        for (DataSnapshot dato:snapshot.getChildren()) {
+                                                            usuarioObtenido = dato.getValue(Usuario.class);
+                                                            if(usuarioObtenido.getEmail().equals(email)){
+                                                                noexist = true;
+                                                                String idUsuario = usuarioObtenido.getId();
+                                                                String miIdUsuario = user.getId();
+                                                                final String nombreUsuario = user.getNombre();
+                                                                final String apellidoUsuario = user.getApellido();
+                                                                String emailUsuario = user.getEmail();
+                                                                Solicitud solicitudAmistad = new Solicitud(miIdUsuario,nombreUsuario,apellidoUsuario,emailUsuario);
+                                                                reference.child("Usuarios").child(idUsuario).child("Solicitudes").child(miIdUsuario).setValue(solicitudAmistad, new DatabaseReference.CompletionListener() {
+                                                                    @Override
+                                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                                        Mensaje.mensaje(getApplicationContext(), "Se ha enviado una solicitud de amnista ha: "+email);
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                        if(noexist != true){
+                                                            Mensaje.errorMensaje(getApplicationContext(), "No se ha encontrado usuario con ese correo");
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
                                                     }
                                                 });
                                             }
-                                        }
-                                        if(noexist != true){
-                                            Mensaje.errorMensaje(getApplicationContext(), "No se ha encontrado usuario con ese correo");
                                         }
                                     }
                                     @Override
@@ -146,13 +173,19 @@ public class SolicitudesAmistad extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
             }
-        }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
     }
