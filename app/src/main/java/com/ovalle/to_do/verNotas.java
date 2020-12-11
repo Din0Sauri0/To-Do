@@ -121,7 +121,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                reference.child("Usuarios").child(idUsuario).child("Tareas").child(id).removeValue(new DatabaseReference.CompletionListener() {
+                reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Tareas").child(id).removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                         Mensaje.warningMensaje(getApplicationContext(), "Se ha eliminado la nota");
@@ -151,7 +151,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         String newDescripcion = txtDescripNota.getText().toString().trim();
         String newCuerpo = txtCurpoNota.getText().toString().trim();
         Tarea newTarea = new Tarea(id,newTitulo,newDescripcion,newCuerpo);
-        reference.child("Usuarios").child(idUsuario).child("Tareas").child(id).setValue(newTarea, new DatabaseReference.CompletionListener() {
+        reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Tareas").child(id).setValue(newTarea, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                 Mensaje.mensajeShort(getApplicationContext(), "La nota ha sido actualizada");
