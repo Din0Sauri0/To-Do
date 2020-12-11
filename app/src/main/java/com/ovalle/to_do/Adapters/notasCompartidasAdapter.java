@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ovalle.to_do.R;
 import com.ovalle.to_do.entidades.Tarea;
+import com.ovalle.to_do.verNotaCom;
 
 import java.util.ArrayList;
 
@@ -59,15 +60,12 @@ public class notasCompartidasAdapter extends RecyclerView.Adapter<notasCompartid
             btnVerNotaCompartida.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*
-                    Intent intent = new Intent(itemView.getContext(), verNotaCompartida.class);
+                    Intent intent = new Intent(itemView.getContext(), verNotaCom.class);
                     intent.putExtra("Nombre nota", tarea.getNombre());
                     intent.putExtra("Descripcion nota", tarea.getDescripcion());
                     intent.putExtra("Cuerpo nota", tarea.getTarea());
                     intent.putExtra("Id nota", tarea.getId());
                     itemView.getContext().startActivity(intent);
-
-                     */
                 }
             });
 

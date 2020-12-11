@@ -24,6 +24,7 @@ public class tareasAdapter extends RecyclerView.Adapter<tareasAdapter.viewHolder
     ArrayList<Tarea> tareas;
     Tarea tarea;
 
+
     public tareasAdapter(ArrayList<Tarea> tareas) {
         this.tareas = tareas;
     }

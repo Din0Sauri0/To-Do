@@ -46,7 +46,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_notas);
         conectarFirebase();
-        idUsuario = mAuth.getCurrentUser().getUid();
+
         txtTituloNota = findViewById(R.id.txtTituloNotaCompart);
         txtDescripNota = findViewById(R.id.txtDescripNotaCompart);
         txtCurpoNota = findViewById(R.id.txtCuerpoNotaCompart);
@@ -121,7 +121,6 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //Mensaje.mensajeShort(getApplicationContext(), "Has presionado si");
                 reference.child("Usuarios").child(idUsuario).child("Tareas").child(id).removeValue(new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
@@ -135,7 +134,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Mensaje.errorMensaje(getApplicationContext(), "Has presionado no");
+                dialog.dismiss();
             }
         });
         dialog.show();
@@ -163,7 +162,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
     public void compartirNota(final String id){
         exist=false;
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("Ingrese el correo del usuario al desea compartir la nota");
+        dialog.setMessage("Ingrese el correo del usuario al que desea compartir la nota");
         dialog.setTitle("Compartir");
         final EditText input = new EditText(this);
         dialog.setView(input);
@@ -172,7 +171,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onClick(final DialogInterface dialog, int which) {
                 //Mensaje.mensajeShort(getApplicationContext(), "Has presionado si");
-                final String correoShare = input.getText().toString();
+                final String correoShare = input.getText().toString().trim();
                 reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Amigos").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -180,7 +179,7 @@ public class verNotas extends AppCompatActivity implements View.OnClickListener 
                             amigoEncontrado = data.getValue(Amigo.class);
                             if(amigoEncontrado.getEmail().equals(correoShare)){
                                 exist=true;
-                                reference.child("Usuarios").child(idUsuario).child("Amigos").addValueEventListener(new ValueEventListener() {
+                                reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Amigos").addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                                         for (DataSnapshot data: snapshot.getChildren()) {

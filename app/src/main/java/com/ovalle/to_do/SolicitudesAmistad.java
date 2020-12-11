@@ -73,7 +73,7 @@ public class SolicitudesAmistad extends AppCompatActivity {
         btnEnviarSolicitud.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Email = txtCodigoAmigo.getText().toString();
+                String Email = txtCodigoAmigo.getText().toString().trim();
                 solicitudAmistad(Email);
             }
         });

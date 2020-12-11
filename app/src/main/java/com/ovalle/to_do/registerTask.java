@@ -68,9 +68,9 @@ public class registerTask extends AppCompatActivity {
             Mensaje.warningMensaje(getApplicationContext(), "Ingrese el contenido de la nota");
         }else{
             String idTarea = UUID.randomUUID().toString();
-            String nombreTarea = txtNombreTarea.getText().toString();
-            String descripcionTarea = txtDescripcionTarea.getText().toString();
-            String contenidoTarea = txtTarea.getText().toString();
+            String nombreTarea = txtNombreTarea.getText().toString().trim();
+            String descripcionTarea = txtDescripcionTarea.getText().toString().trim();
+            String contenidoTarea = txtTarea.getText().toString().trim();
             Tarea tarea = new Tarea(idTarea,nombreTarea, descripcionTarea,contenidoTarea);
             reference.child("Usuarios").child(mAuth.getCurrentUser().getUid()).child("Tareas").child(tarea.getId()).setValue(tarea, new DatabaseReference.CompletionListener() {
                 @Override

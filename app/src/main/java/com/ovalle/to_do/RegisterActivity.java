@@ -88,10 +88,10 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     String id = mAuth.getCurrentUser().getUid();
-                    String nombre = txtName.getText().toString();
-                    String apellido = txtLastName.getText().toString();
-                    String email = txtEmail.getText().toString();
-                    String password = txtPassword.getText().toString();
+                    String nombre = txtName.getText().toString().trim();
+                    String apellido = txtLastName.getText().toString().trim();
+                    String email = txtEmail.getText().toString().trim().toLowerCase();
+                    String password = txtPassword.getText().toString().trim();
                     Usuario usuario = new Usuario(id,nombre,apellido,email,password);
                     reference.child("Usuarios").child(id).setValue(usuario, new DatabaseReference.CompletionListener() {
                         @Override
